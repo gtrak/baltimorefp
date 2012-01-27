@@ -10,8 +10,9 @@
   []
   (reduce + (map :balance accounts)))
 
-(def starting-total
-  (current-total))
+(defn negative-balances
+  []
+  (count (filter (comp (partial > 0) :balance) (seq accounts))))
 
 (defn deplete
   [account amount]
@@ -31,8 +32,10 @@
         vbal (:balance victim)
         rbal (:balance receiver)
         amt (rand-int vbal)]
+    (Thread/sleep 3)
     (aset accounts (name-index receiver-name) (supplement receiver amt))
-    (aset accounts (name-index victim-name) (deplete victim amt))))-
+    (Thread/sleep 3)
+    (aset accounts (name-index victim-name) (deplete victim amt))))
 
 (defn rand-account-name
   []
@@ -43,21 +46,41 @@
   (let [others (vec (disj (set (map :name accounts)) name))]
     (others (rand-int (count others)))))
 
-(time (dotimes [i 10000]
+(def starting-total
+  (current-total))
+
+(def starting-negative-balances
+  (negative-balances))
+
+(time (dotimes [i 100]
    (let [recipient (rand-account-name)]
      (take-from (rand-other-account-name recipient) recipient))))
 
 (def synchronous-total
   (current-total))
 
-(dotimes [i 4]
-  (.start (Thread. (fn [] (dotimes [i 2500]
-                            (let [recipient (rand-account-name)]
-                              (take-from (rand-other-account-name recipient) recipient)))))))
+(def synchronous-negative-account-balances
+  (negative-balances))
+
+(let [threads (vec (for [i (range 4)]
+                     (Thread. (fn []
+                                (dotimes [j 25]
+                                  (let [recipient (rand-account-name)]
+                                    (take-from (rand-other-account-name recipient) recipient)))))))]
+  (dotimes [i 4]
+    (.start (threads i)))
+  (dotimes [i 4]
+     (.join (threads i))))
 
 (def asynchronous-total
   (current-total))
 
+(def asynchronous-negative-account-balances
+  (negative-balances))
+
 (println "Starting total: " starting-total)
-(println "Total after 10000 sync transactions: " synchronous-total)
-(println "Total after 10000 async transactions: " asynchronous-total)
+(println "Starting negative balances: " starting-negative-balances)
+(println "Total after 100 sync transactions: " synchronous-total)
+(println "Accounts with a negative balance after synch: " synchronous-negative-account-balances)
+(println "Total after 100 async transactions: " asynchronous-total)
+(println "Accounts with a negative balance after async: " asynchronous-negative-account-balances)
