@@ -11,8 +11,12 @@ The pres01-concurrency.refs namespace includes three example groups using mutabl
 then
 
    (require 'pres01-concurrency.refs.ohno)
-   (require 'pres01-concurrency.refs.refs)
    (require 'pres01-concurrency.refs.atoms)
+   (require 'pres01-concurrency.refs.refs)
+   (require 'pres01-concurrency.agents.ohno)
+   (require 'pres01-concurrency.agents.refs)
+   (require 'pres01-concurrency.agents.atoms)
+   (require 'pres01-concurrency.agents.agents)
 
 ## License
 
