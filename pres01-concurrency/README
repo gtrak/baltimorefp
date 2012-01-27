@@ -1,0 +1,21 @@
+# pres01-concurrency
+
+This is a brief set of example source files which demonstrate behavior of various concurrency constructs.
+
+## Usage
+
+The pres01-concurrency.refs namespace includes three example groups using mutable identities to demonstrate race conditions and how refs, atoms, and mutable array references behave under both synchronous and asynchronous access. There are timing tests run on the synchronous loops to demonstrate the relative performance of each of the three approaches to mutable identity. To run each example:
+
+```lein repl```
+
+then
+
+```(require 'pres01-concurrency.refs.ohno)
+   (require 'pres01-concurrency.refs.refs)
+   (require 'pres01-concurrency.refs.atoms)```
+
+## License
+
+Copyright (C) 2012 FIXME
+
+Distributed under the Eclipse Public License, the same as Clojure.
